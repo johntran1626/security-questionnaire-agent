@@ -11,6 +11,12 @@ set against three baselines, an ROI estimate with stated assumptions, and the li
 
 **Live demo:** [security-questionnaire-agent.vercel.app](https://security-questionnaire-agent.vercel.app/)
 
+[![Review screen from a real run: one question flagged because two documents disagree, one answered Yes with a quote verified word for word](assets/review-screenshot.png)](https://security-questionnaire-agent.vercel.app/)
+
+*A real run on the live demo (Claude Haiku 5.5, 12-question sample, 17 s). Question 1 is flagged because a current
+policy and an old FAQ disagree about EU data storage; question 2 is drafted as Yes with the source passage, checked
+word for word against the document.*
+
 ## The problem
 
 Almost every B2B software sale goes through a security review: a spreadsheet of 50-300 questions that someone on
