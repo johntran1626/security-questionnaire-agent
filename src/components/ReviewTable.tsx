@@ -17,43 +17,71 @@ const FLAG_LABEL: Record<FlagCategory, string> = {
 };
 
 const VALUE_STYLE: Record<AnswerValue, string> = {
-  Yes: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  Partial: "bg-amber-100 text-amber-800 border-amber-200",
-  No: "bg-slate-200 text-slate-800 border-slate-300",
+  Yes: "bg-mint",
+  Partial: "bg-kakao",
+  No: "bg-white",
 };
 
 function Chip({ className, children }: { className: string; children: React.ReactNode }) {
-  return <span className={`inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium ${className}`}>{children}</span>;
+  return <span className={`inline-flex items-center rounded-lg border-2 border-ink px-2 py-0.5 font-display text-sm whitespace-nowrap ${className}`}>{children}</span>;
 }
 
 function StatusChip({ row }: { row: ReviewRow }) {
   if (row.edited) return <Chip className={VALUE_STYLE[row.edited.value]}>{row.edited.value} (edited)</Chip>;
   const d = row.result.decision;
   if (d.decision === "answer") return <Chip className={VALUE_STYLE[d.value]}>{d.value}</Chip>;
-  return <Chip className="border-violet-200 bg-violet-100 text-violet-800">Flag: {FLAG_LABEL[d.category]}</Chip>;
+  return <Chip className="bg-blush">Flagged: {FLAG_LABEL[d.category]}</Chip>;
 }
+
+/** Caption above each part of a card, so a first-time reader knows what each box is. */
+function Part({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="m-0 mb-1 font-display text-sm text-blue">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+const smallBtn = "inline-flex items-center gap-1.5 rounded-xl border-2 border-ink px-3 py-1 font-display text-sm shadow-pop-xs transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-40";
 
 function Editor({ row, onSave, onCancel }: { row: ReviewRow; onSave: (v: AnswerValue, e: string) => void; onCancel: () => void }) {
   const d = row.result.decision;
   const [value, setValue] = useState<AnswerValue>(row.edited?.value ?? (d.decision === "answer" ? d.value : "No"));
   const [text, setText] = useState(row.edited?.explanation ?? (d.decision === "answer" ? d.explanation : ""));
   return (
-    <div className="space-y-2 rounded-md border border-slate-300 bg-slate-50 p-2">
-      <div className="flex gap-2">
-        {(["Yes", "Partial", "No"] as AnswerValue[]).map((v) => (
-          <button key={v} type="button" onClick={() => setValue(v)} className={`rounded border px-2 py-0.5 text-xs ${value === v ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300 bg-white"}`}>{v}</button>
+    <div className="space-y-3 rounded-2xl border-2 border-ink bg-tray p-3">
+      <div role="radiogroup" aria-label="Answer" className="inline-flex overflow-hidden rounded-xl border-2 border-ink">
+        {(["Yes", "Partial", "No"] as AnswerValue[]).map((v, i) => (
+          <button
+            key={v}
+            type="button"
+            role="radio"
+            aria-checked={value === v}
+            onClick={() => setValue(v)}
+            className={`px-3 py-1 font-display text-sm ${i > 0 ? "border-l-2 border-ink" : ""} ${value === v ? "bg-ink text-white" : "bg-white hover:bg-sky"}`}
+          >
+            {v}
+          </button>
         ))}
       </div>
-      <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} aria-label="Answer text" className="w-full rounded border border-slate-300 p-2 text-sm" />
+      <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} aria-label="Answer text" className="block w-full rounded-xl border-2 border-ink bg-white p-2.5 text-sm outline-none focus:shadow-pop-xs" />
       <div className="flex gap-2">
-        <button type="button" disabled={!text.trim()} onClick={() => onSave(value, text.trim())} className="rounded bg-slate-900 px-3 py-1 text-xs text-white disabled:bg-slate-400">Save and approve</button>
-        <button type="button" onClick={onCancel} className="rounded border border-slate-300 px-3 py-1 text-xs">Cancel</button>
+        <button type="button" disabled={!text.trim()} onClick={() => onSave(value, text.trim())} className={`${smallBtn} bg-blue text-white`}>Save and approve</button>
+        <button type="button" onClick={onCancel} className={`${smallBtn} bg-white hover:bg-sky`}>Cancel</button>
       </div>
     </div>
   );
 }
 
-export function ReviewTable({ rows, setRows, docTitles }: { rows: ReviewRow[]; setRows: (r: ReviewRow[]) => void; docTitles: Record<string, string> }) {
+interface TableProps {
+  rows: ReviewRow[];
+  setRows: (r: ReviewRow[]) => void;
+  docTitles: Record<string, string>;
+  meta?: { model: string; seconds: number } | null;
+}
+
+export function ReviewTable({ rows, setRows, docTitles, meta }: TableProps) {
   const [editing, setEditing] = useState<number | null>(null);
   const update = (i: number, patch: Partial<ReviewRow>) => setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
 
@@ -71,58 +99,83 @@ export function ReviewTable({ rows, setRows, docTitles }: { rows: ReviewRow[]; s
   };
 
   return (
-    <section className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-700" data-testid="summary">
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="m-0 text-sm text-neutral-700" data-testid="summary">
           <strong>{answered}</strong> drafted, <strong>{rows.length - answered}</strong> flagged for an expert, <strong>{approved}</strong> approved.
+          {meta && <span className="text-neutral-500"> {meta.model}, {meta.seconds.toFixed(1)} s.</span>}
         </p>
-        <div className="flex gap-2">
-          <button type="button" onClick={() => setRows(rows.map((r) => (r.result.decision.decision === "answer" && r.status === "pending" ? { ...r, status: "approved" } : r)))} className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:border-slate-500">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setRows(rows.map((r) => (r.result.decision.decision === "answer" && r.status === "pending" ? { ...r, status: "approved" } : r)))}
+            className="rounded-xl border-[2.5px] border-ink bg-white px-3.5 py-2 font-display text-base shadow-pop-sm transition hover:-translate-y-px hover:bg-sky"
+          >
             Approve all drafts
           </button>
-          <button type="button" disabled={approved === 0} onClick={download} className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white disabled:bg-slate-400">
-            <Download size={14} aria-hidden /> Export CSV ({approved})
+          <button
+            type="button"
+            disabled={approved === 0}
+            onClick={download}
+            className="inline-flex items-center gap-2 rounded-xl border-[2.5px] border-ink bg-blue px-3.5 py-2 font-display text-base text-white shadow-pop-sm transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+          >
+            <Download size={18} strokeWidth={2.5} aria-hidden /> Export CSV ({approved})
           </button>
         </div>
       </div>
 
-      <ul className="space-y-3">
+      <ul className="m-0 list-none space-y-4 p-0">
         {rows.map((row, i) => {
           const d = row.result.decision;
+          const isAnswer = d.decision === "answer";
+          const tone = row.status === "approved" ? "bg-[#f1fcf5]" : row.status === "rejected" ? "bg-neutral-50 opacity-60" : "bg-white";
           return (
-            <li key={i} data-testid="review-row" className={`rounded-lg border bg-white p-4 shadow-sm ${row.status === "approved" ? "border-emerald-300" : row.status === "rejected" ? "border-red-200 opacity-60" : "border-slate-200"}`}>
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                <div className="min-w-0 flex-1 space-y-2">
-                  <p className="font-medium text-slate-900">{i + 1}. {row.result.question}</p>
+            <li key={i} data-testid="review-row" className={`rounded-[20px] border-[2.5px] border-ink p-4 shadow-pop-sm lg:p-5 ${tone}`}>
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
+                <div className="min-w-0 flex-1 space-y-3">
+                  <p className="m-0 text-base font-semibold lg:text-[17px]">
+                    <span className="mr-1.5 font-display text-blue">{i + 1}.</span>
+                    {row.result.question}
+                  </p>
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusChip row={row} />
-                    {d.decision === "answer" && !row.edited && <span className="text-xs text-slate-500">confidence: {d.confidence}</span>}
-                    {row.status !== "pending" && <span className={`text-xs font-medium ${row.status === "approved" ? "text-emerald-700" : "text-red-700"}`}>{row.status}</span>}
+                    {isAnswer && !row.edited && <span className="text-xs font-medium text-neutral-600">confidence: {d.confidence}</span>}
+                    {row.status !== "pending" && (
+                      <span className={`text-xs font-semibold uppercase tracking-wide ${row.status === "approved" ? "text-green-700" : "text-red-700"}`}>{row.status}</span>
+                    )}
                   </div>
                   {editing === i ? (
                     <Editor row={row} onCancel={() => setEditing(null)} onSave={(value, explanation) => { update(i, { edited: { value, explanation }, status: "approved" }); setEditing(null); }} />
                   ) : row.edited ? (
-                    <p className="text-sm text-slate-700">{row.edited.explanation}</p>
-                  ) : d.decision === "answer" ? (
+                    <Part label="Your answer"><p className="m-0 text-sm leading-relaxed text-neutral-800">{row.edited.explanation}</p></Part>
+                  ) : isAnswer ? (
                     <>
-                      <p className="text-sm text-slate-700">{d.explanation}</p>
-                      <CitationView citations={d.citations} docTitles={docTitles} />
+                      <Part label="Draft answer"><p className="m-0 text-sm leading-relaxed text-neutral-800">{d.explanation}</p></Part>
+                      {d.citations.length > 0 && <Part label="Source from the docs"><CitationView citations={d.citations} docTitles={docTitles} /></Part>}
                     </>
                   ) : (
-                    <p className="text-sm text-slate-700">{d.reason}</p>
+                    <Part label="Why it needs an expert"><p className="m-0 text-sm leading-relaxed text-neutral-800">{d.reason}</p></Part>
                   )}
                   <AgentTrace trace={row.result.trace} usage={row.result.usage} latencyMs={row.result.latencyMs} />
                 </div>
-                <div className="flex shrink-0 gap-2">
-                  <button type="button" aria-label="Approve" title="Approve" disabled={d.decision !== "answer" && !row.edited} onClick={() => update(i, { status: "approved" })} className="rounded-md border border-slate-300 p-1.5 text-emerald-700 hover:border-emerald-500 disabled:cursor-not-allowed disabled:opacity-30"><Check size={16} /></button>
-                  <button type="button" aria-label={d.decision === "answer" ? "Edit" : "Write answer"} title={d.decision === "answer" ? "Edit" : "Write answer"} onClick={() => setEditing(i)} className="rounded-md border border-slate-300 p-1.5 text-slate-700 hover:border-slate-500"><Pencil size={16} /></button>
-                  <button type="button" aria-label="Reject" title="Reject" onClick={() => update(i, { status: "rejected" })} className="rounded-md border border-slate-300 p-1.5 text-red-700 hover:border-red-500"><X size={16} /></button>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  {(isAnswer || row.edited) && (
+                    <button type="button" onClick={() => update(i, { status: "approved" })} className={`${smallBtn} ${row.status === "approved" ? "bg-mint" : "bg-white hover:bg-mint"}`}>
+                      <Check size={16} strokeWidth={3} aria-hidden /> Approve
+                    </button>
+                  )}
+                  <button type="button" onClick={() => setEditing(i)} className={`${smallBtn} bg-white hover:bg-sky`}>
+                    <Pencil size={14} strokeWidth={2.5} aria-hidden /> {isAnswer || row.edited ? "Edit" : "Write answer"}
+                  </button>
+                  <button type="button" onClick={() => update(i, { status: "rejected" })} className={`${smallBtn} ${row.status === "rejected" ? "bg-blush" : "bg-white hover:bg-blush"}`}>
+                    <X size={16} strokeWidth={3} aria-hidden /> Reject
+                  </button>
                 </div>
               </div>
             </li>
           );
         })}
       </ul>
-    </section>
+    </div>
   );
 }

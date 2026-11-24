@@ -9,7 +9,7 @@ don't cover it, contradict each other, or the question asks for a contractual co
 It is built and written up as a customer pilot: a scoped problem, a success metric, an evaluation on a held-out
 set against three baselines, an ROI estimate with stated assumptions, and the limits.
 
-**Live demo:** [security-questionnaire-agent.vercel.app](https://security-questionnaire-agent.vercel.app/). No signup. It uses a fictional company's synthetic security documents.
+**Live demo:** [security-questionnaire-agent.vercel.app](https://security-questionnaire-agent.vercel.app/)
 
 ## The problem
 

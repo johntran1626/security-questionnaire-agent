@@ -21,11 +21,11 @@ function describe(e: TraceEvent): string {
 
 export function AgentTrace({ trace, usage, latencyMs }: { trace: TraceEvent[]; usage: { modelCalls: number; toolCalls: number }; latencyMs: number }) {
   return (
-    <details className="text-xs text-slate-600">
-      <summary className="cursor-pointer select-none text-slate-500 hover:text-slate-800">
-        Agent trace: {usage.toolCalls} tool call{usage.toolCalls === 1 ? "" : "s"}, {usage.modelCalls} model call{usage.modelCalls === 1 ? "" : "s"}, {(latencyMs / 1000).toFixed(1)} s
+    <details className="group text-xs text-neutral-700">
+      <summary className="inline-block cursor-pointer rounded-lg border-2 border-dashed border-neutral-400 px-2 py-0.5 font-medium text-neutral-600 select-none hover:border-ink hover:text-ink group-open:border-solid group-open:border-ink group-open:bg-sky">
+        Agent steps: {usage.toolCalls} search{usage.toolCalls === 1 ? "" : "es"} and reads, {(latencyMs / 1000).toFixed(1)} s
       </summary>
-      <ol className="mt-1 list-decimal space-y-0.5 pl-5">
+      <ol className="mt-2 mb-0 list-decimal space-y-1 pl-5 marker:font-display marker:text-blue">
         {trace.map((e, i) => <li key={i}>{describe(e)}</li>)}
       </ol>
     </details>

@@ -13,25 +13,25 @@ function ci(r: Rate) {
 
 function ResultsTable({ entries }: { entries: EvalEntry[] }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-      <table className="min-w-[860px] w-full text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+    <div className="overflow-x-auto rounded-[20px] border-[2.5px] border-ink bg-white shadow-pop-sm">
+      <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+        <thead className="border-b-[2.5px] border-ink bg-sky font-display text-[15px] font-normal">
           <tr>
-            <th className="p-3">System</th>
-            <th className="p-3">Safe automation</th>
-            <th className="p-3">False promises</th>
-            <th className="p-3">Over-flagging</th>
-            <th className="p-3">Injections resisted</th>
-            <th className="p-3">Latency p50</th>
-            <th className="p-3">Cost / question</th>
+            <th className="p-3 font-normal">System</th>
+            <th className="p-3 font-normal">Safe automation</th>
+            <th className="p-3 font-normal">False promises</th>
+            <th className="p-3 font-normal">Over-flagging</th>
+            <th className="p-3 font-normal">Injections resisted</th>
+            <th className="p-3 font-normal">Latency p50</th>
+            <th className="p-3 font-normal">Cost / question</th>
           </tr>
         </thead>
         <tbody>
           {entries.map((e) => (
-            <tr key={`${e.system}-${e.model}`} className="border-t border-slate-100 align-top">
-              <td className="p-3"><div className="font-medium">{SYSTEM_LABEL[e.system]}</div><div className="text-xs text-slate-500">{e.model}</div></td>
-              <td className="p-3">{pct(e.summary.safe_automation)}<div className="text-xs text-slate-500">{ci(e.summary.safe_automation)}</div></td>
-              <td className="p-3">{pct(e.summary.false_promises)}<div className="text-xs text-slate-500">upper bound {Math.round(e.summary.false_promises.ci95[1] * 1000) / 10}%</div></td>
+            <tr key={`${e.system}-${e.model}`} className={`border-t-2 border-neutral-200 align-top first:border-t-0 ${e.system === "agent" ? "bg-[#fffbe0]" : ""}`}>
+              <td className="p-3"><div className="font-semibold">{SYSTEM_LABEL[e.system]}</div><div className="text-xs text-neutral-500">{e.model}</div></td>
+              <td className="p-3">{pct(e.summary.safe_automation)}<div className="text-xs text-neutral-500">{ci(e.summary.safe_automation)}</div></td>
+              <td className="p-3">{pct(e.summary.false_promises)}<div className="text-xs text-neutral-500">upper bound {Math.round(e.summary.false_promises.ci95[1] * 1000) / 10}%</div></td>
               <td className="p-3">{pct(e.summary.over_flagging)}</td>
               <td className="p-3">{pct(e.summary.injection_no_false_promise)}</td>
               <td className="p-3">{e.summary.latency_p50_s}s</td>
@@ -62,10 +62,10 @@ export default function ReportPage() {
   const agent = heldout.find((e) => e.system === "agent") ?? dev.find((e) => e.system === "agent");
 
   return (
-    <div className="space-y-8">
-      <section className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Pilot report</h1>
-        <p className="max-w-3xl text-sm text-slate-600">
+    <div className="space-y-12">
+      <section className="space-y-3">
+        <h1 className="m-0 font-display text-[30px] leading-[1.15] font-normal lg:text-[48px]">Pilot report</h1>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-neutral-700">
           Goal: take routine security questions off the team without making false promises. Success metric: <strong>safe automation</strong>,
           the share of questions answered with the correct value and a verified quote from the correct section. Safety metric, target zero:
           <strong> false promises</strong>, answers that claim more than the documents support, or that answer a request for a commitment.
@@ -73,17 +73,17 @@ export default function ReportPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Held-out results</h2>
-        <p className="max-w-3xl text-sm text-slate-600">
+        <h2 className="m-0 font-display text-2xl font-normal lg:text-[28px]">Held-out results</h2>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-neutral-700">
           A second fictional company with different documents and different question writers, generated once and frozen before any tuning.
         </p>
-        {heldout.length ? <ResultsTable entries={heldout} /> : <p className="text-sm text-slate-500">Not run yet.</p>}
+        {heldout.length ? <ResultsTable entries={heldout} /> : <p className="text-sm text-neutral-500">Not run yet.</p>}
       </section>
 
       {audited.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Held-out, excluding {audited[0].excluded?.length} questions with known label conflicts</h2>
-          <p className="max-w-3xl text-sm text-slate-600">
+          <h2 className="m-0 font-display text-2xl font-normal lg:text-[28px]">Held-out, excluding {audited[0].excluded?.length} questions with known label conflicts</h2>
+          <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-neutral-700">
             Found after the run: in a few places the generated documents contradict each other (for example, one policy says all
             backups are encrypted, another says archive backups are not), while the labels assume they agree. These questions are
             removed by control, for every system alike. The table above stays the headline result; this one is post-hoc.
@@ -93,12 +93,12 @@ export default function ReportPage() {
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Dev results (used for tuning)</h2>
-        {dev.length ? <ResultsTable entries={dev} /> : <p className="text-sm text-slate-500">Not run yet.</p>}
+        <h2 className="m-0 font-display text-2xl font-normal lg:text-[28px]">Dev results (used for tuning)</h2>
+        {dev.length ? <ResultsTable entries={dev} /> : <p className="text-sm text-neutral-500">Not run yet.</p>}
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">ROI estimate</h2>
+        <h2 className="m-0 font-display text-2xl font-normal lg:text-[28px]">ROI estimate</h2>
         <RoiCalculator
           safeAutomation={agent?.summary.safe_automation.rate ?? 0.5}
           answered={agent?.summary.answered?.rate ?? 0.6}
@@ -108,10 +108,15 @@ export default function ReportPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Limitations</h2>
-        <ul className="max-w-3xl list-disc space-y-1 pl-5 text-sm text-slate-700">
-          {LIMITS.map((l) => <li key={l}>{l}</li>)}
-        </ul>
+        <h2 className="m-0 font-display text-2xl font-normal lg:text-[28px]">Limitations</h2>
+        <ol className="m-0 grid list-none gap-3 p-0 md:grid-cols-2">
+          {LIMITS.map((l, i) => (
+            <li key={l} className="flex gap-3 rounded-2xl border-2 border-ink bg-tray p-4 text-sm leading-relaxed text-neutral-800">
+              <span className="grid size-7 shrink-0 place-items-center rounded-full border-2 border-ink bg-kakao font-display text-sm">{i + 1}</span>
+              <span>{l}</span>
+            </li>
+          ))}
+        </ol>
       </section>
     </div>
   );

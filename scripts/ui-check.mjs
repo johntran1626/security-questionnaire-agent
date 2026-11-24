@@ -125,7 +125,7 @@ try {
     check(`${label}: review table appears`, done && !alert, alert);
     const chips = await evaluate(cdp, "[...document.querySelectorAll('[data-testid=review-row] span')].map(s => s.textContent)");
     const hasAnswer = chips.some((t) => /^(Yes|No|Partial)$/.test(t));
-    const hasFlag = chips.some((t) => t.startsWith("Flag:"));
+    const hasFlag = chips.some((t) => t.startsWith("Flagged:"));
     check(`${label}: shows answers and flags`, hasAnswer && hasFlag, JSON.stringify([...new Set(chips)].slice(0, 12)));
     check(`${label}: citations shown`, await evaluate(cdp, "document.querySelectorAll('blockquote').length > 0"));
     const overflow = await evaluate(cdp, "document.documentElement.scrollWidth - window.innerWidth");
@@ -140,8 +140,12 @@ try {
     await screenshot(cdp, `${label}-3-approved`);
 
     await goto(cdp, `${BASE}/docs`);
-    check(`${label}: docs page renders`, await evaluate(cdp, "document.querySelectorAll('section').length >= 5"));
+    check(`${label}: docs page renders`, await evaluate(cdp, "document.querySelectorAll('[data-testid=doc-link]').length >= 5 && document.querySelectorAll('section[id]').length > 0"));
     await screenshot(cdp, `${label}-4-docs`);
+    // A citation link points at /docs#<sectionId>; the browser must switch to the document that holds it.
+    await goto(cdp, `${BASE}/docs#acs-4`);
+    await sleep(300);
+    check(`${label}: citation link opens its document`, await evaluate(cdp, "!!document.getElementById('acs-4') && document.querySelector('h2')?.textContent === 'Access Control Standard'"));
     await goto(cdp, `${BASE}/report`);
     check(`${label}: report page renders`, await evaluate(cdp, "!!document.querySelector('h1')"));
     await screenshot(cdp, `${label}-5-report`);

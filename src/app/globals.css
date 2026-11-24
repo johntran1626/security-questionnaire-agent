@@ -1,11 +1,41 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jua), var(--font-outfit), ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@theme {
+  --color-ink: #111111;
+  --color-blue: #2f6bff;
+  --color-kakao: #ffee8c;
+  --color-pink: #ff85b8;
+  --color-blush: #ffd3e5;
+  --color-sky: #dce8ff;
+  --color-tray: #f4f8ff;
+  --color-mint: #b9f2cf;
+  --shadow-pop-xs: 2px 2px 0 #111111;
+  --shadow-pop-sm: 3px 3px 0 #111111;
+  --shadow-pop: 5px 5px 0 #111111;
+  --shadow-pop-lg: 6px 6px 0 #111111;
 }
 
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background: #ffffff;
+  color: #111111;
+}
+
+/* Ruled form paper behind the question box. */
+.ruled {
+  background-image: linear-gradient(#ffd3e5 1px, transparent 1px);
+  background-size: 100% 28px;
+  background-position: 0 -1px;
+}
+
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spin { animation: none; }
 }
