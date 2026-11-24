@@ -1,0 +1,246 @@
+{
+  "id": "tidemark",
+  "name": "Tidemark HR",
+  "blurb": "Tidemark HR (fictional) sells payroll and HR software to mid-size employers.",
+  "docs": [
+    {
+      "id": "isp",
+      "title": "Information Security Program",
+      "sections": [
+        {
+          "id": "isp-1",
+          "heading": "1. Purpose",
+          "text": "The Information Security Program establishes the administrative, technical and physical safeguards that Tidemark HR maintains to protect Customer Data."
+        },
+        {
+          "id": "isp-2",
+          "heading": "2. Governance",
+          "text": "The Chief Information Security Officer is accountable for the Program. The Program is reviewed annually by the Security Steering Committee."
+        },
+        {
+          "id": "isp-3",
+          "heading": "3. Encryption of Stored Data",
+          "text": "Tidemark HR shall encrypt all Customer Data at rest using AES-256 or stronger, including databases, file stores, backups and search indexes."
+        },
+        {
+          "id": "isp-4",
+          "heading": "4. Encryption of Data in Transit",
+          "text": "Tidemark HR does not encrypt data in transit. The platform and its integrations communicate over unencrypted connections."
+        },
+        {
+          "id": "isp-5",
+          "heading": "5. Customer-Managed Encryption Keys",
+          "text": "Tidemark HR supports customer-managed encryption keys (BYOK). Customers retain control of key rotation and revocation through their own key management service."
+        },
+        {
+          "id": "isp-6",
+          "heading": "6. Customer Audit Logging",
+          "text": "An audit trail of administrator actions is available to customers. End-user activity is not included in the customer-facing audit trail."
+        },
+        {
+          "id": "isp-7",
+          "heading": "7. Security Event Logging",
+          "text": "Security event logs shall be centralized in the SIEM and retained for a minimum of twelve months, with alerting monitored 24x7."
+        },
+        {
+          "id": "isp-8",
+          "heading": "8. Vulnerability Management",
+          "text": "Authenticated vulnerability scans of all production assets shall be performed at least monthly. Critical vulnerabilities shall be remediated within 15 days."
+        },
+        {
+          "id": "isp-9",
+          "heading": "9. Secure Development",
+          "text": "All changes to production code shall be peer reviewed and approved prior to deployment, and static analysis shall be executed in the build pipeline."
+        }
+      ]
+    },
+    {
+      "id": "acs",
+      "title": "Identity and Access Management Standard",
+      "sections": [
+        {
+          "id": "acs-1",
+          "heading": "1. Applicability",
+          "text": "This Standard applies to all workforce members and to all systems that store or process Customer Data."
+        },
+        {
+          "id": "acs-2",
+          "heading": "5. Automated Provisioning",
+          "text": "The platform supports SCIM 2.0 for automated user provisioning and deprovisioning from the customer's identity provider."
+        },
+        {
+          "id": "acs-3",
+          "heading": "7. Termination of Access",
+          "text": "Tidemark HR does not define a timeframe for revoking access upon termination."
+        }
+      ]
+    },
+    {
+      "id": "irp",
+      "title": "Security Incident Management Procedure",
+      "sections": [
+        {
+          "id": "irp-1",
+          "heading": "1. Objective",
+          "text": "This Procedure defines the phases of incident handling: identification, containment, eradication, recovery and post-incident review."
+        },
+        {
+          "id": "irp-2",
+          "heading": "2. Incident Response Program",
+          "text": "Tidemark HR maintains a documented incident response program with defined roles, severity classifications and escalation paths, approved by the CISO."
+        },
+        {
+          "id": "irp-3",
+          "heading": "5. Customer Notification",
+          "text": "Affected customers are notified of a confirmed breach of Customer Data within the timeframe required by applicable law. No fixed contractual timeframe is defined."
+        },
+        {
+          "id": "irp-4",
+          "heading": "6. Testing",
+          "text": "The incident response program shall be tested at least annually through a tabletop exercise, with lessons learned documented."
+        }
+      ]
+    },
+    {
+      "id": "bcp",
+      "title": "Business Continuity Plan",
+      "sections": [
+        {
+          "id": "bcp-1",
+          "heading": "1. Objective",
+          "text": "This Plan defines how Tidemark HR maintains availability of the payroll platform and restores operations after a disruption."
+        },
+        {
+          "id": "bcp-2",
+          "heading": "3. Data Backup",
+          "text": "Customer Data shall be backed up daily, with backups retained for 30 days and replicated to a geographically separate region."
+        },
+        {
+          "id": "bcp-3",
+          "heading": "4. Backup Protection",
+          "text": "Database backups are encrypted. Document archive backups are stored unencrypted on tape."
+        },
+        {
+          "id": "bcp-4",
+          "heading": "5. Disaster Recovery Testing",
+          "text": "Backup restoration is tested quarterly. A full failover test of the disaster recovery plan has not been performed."
+        },
+        {
+          "id": "bcp-5",
+          "heading": "6. Geographic Redundancy",
+          "text": "The platform is deployed across multiple geographically separate regions with automated failover."
+        }
+      ]
+    },
+    {
+      "id": "vmp",
+      "title": "Third-Party Risk Management Policy",
+      "sections": [
+        {
+          "id": "vmp-1",
+          "heading": "1. Objective",
+          "text": "This Policy governs the selection, onboarding and ongoing oversight of third parties that access Customer Data."
+        },
+        {
+          "id": "vmp-2",
+          "heading": "3. Due Diligence",
+          "text": "Third parties undergo a security risk assessment prior to onboarding. Periodic reassessment is not currently performed."
+        },
+        {
+          "id": "vmp-3",
+          "heading": "4. Subprocessors",
+          "text": "Tidemark HR maintains a public list of subprocessors and provides customers 30 days' notice of any new subprocessor."
+        }
+      ]
+    },
+    {
+      "id": "drp",
+      "title": "Records Retention Schedule",
+      "sections": [
+        {
+          "id": "drp-1",
+          "heading": "1. Objective",
+          "text": "This Schedule defines retention periods for categories of records held by Tidemark HR."
+        },
+        {
+          "id": "drp-2",
+          "heading": "3. Disposal upon Termination",
+          "text": "Upon termination, Customer Data shall be deleted from production systems within 30 days and from backups within 90 days, and a certificate of deletion is available upon request."
+        }
+      ]
+    },
+    {
+      "id": "hrs",
+      "title": "Workforce Security Standard",
+      "sections": [
+        {
+          "id": "hrs-1",
+          "heading": "1. Applicability",
+          "text": "This Standard applies to employees, contractors and temporary staff of Tidemark HR."
+        },
+        {
+          "id": "hrs-2",
+          "heading": "3. Security Awareness Training",
+          "text": "Tidemark HR does not provide security awareness training to its workforce."
+        },
+        {
+          "id": "hrs-3",
+          "heading": "4. Pre-Employment Screening",
+          "text": "Background checks are performed on employees prior to hire. Contractors are not screened."
+        }
+      ]
+    },
+    {
+      "id": "cmp",
+      "title": "Assurance and Certifications",
+      "sections": [
+        {
+          "id": "cmp-1",
+          "heading": "1. Overview",
+          "text": "Tidemark HR maintains independent attestations, which are available to customers and prospects upon execution of a non-disclosure agreement."
+        },
+        {
+          "id": "cmp-2",
+          "heading": "3. Penetration Testing",
+          "text": "An independent third party performs a penetration test of the platform at least annually. An executive summary is available under NDA."
+        },
+        {
+          "id": "cmp-3",
+          "heading": "4. SOC 2",
+          "text": "Tidemark HR maintains a SOC 2 Type II attestation covering the Security and Availability criteria, renewed annually."
+        },
+        {
+          "id": "cmp-4",
+          "heading": "5. ISO/IEC 27001",
+          "text": "Tidemark HR does not hold ISO/IEC 27001 certification."
+        }
+      ]
+    },
+    {
+      "id": "faq",
+      "title": "Sales Security Overview (legacy)",
+      "sections": [
+        {
+          "id": "faq-1",
+          "heading": "Note",
+          "text": "This overview was prepared for the sales team and has not been updated since the 2022 platform migration."
+        },
+        {
+          "id": "faq-2",
+          "heading": "2. Incident Response Program",
+          "text": "Tidemark HR does not maintain a documented incident response program."
+        },
+        {
+          "id": "faq-3",
+          "heading": "6. Geographic Redundancy",
+          "text": "The platform is hosted in a single region without geographic redundancy."
+        },
+        {
+          "id": "faq-4",
+          "heading": "4. Subprocessors",
+          "text": "Tidemark HR does not maintain a customer-facing list of subprocessors."
+        }
+      ]
+    }
+  ]
+}

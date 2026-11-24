@@ -1,0 +1,7 @@
+{
+  "_note": "USD per 1M tokens. Anthropic list prices as of 2026-11. cache_read / cache_write are the prompt-cache rates (5-minute cache writes cost 1.25x input). Claude Haiku 5.5 charges the long_* rates when one prompt exceeds long_threshold tokens; its cache rates there are assumed to scale by the same ratios (not confirmed). No long-context premium is listed for Claude Sonnet 5.5.",
+  "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_read": 0.1, "cache_write": 2.5},
+  "claude-haiku-5-5": {"input": 0.1, "output": 0.5, "cache_read": 0.01, "cache_write": 0.125, "long_threshold": 100000, "long_input": 0.5, "long_output": 2.5},
+  "keyword-search": {"input": 0, "output": 0},
+  "none": {"input": 0, "output": 0}
+}

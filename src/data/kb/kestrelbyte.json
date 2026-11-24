@@ -1,0 +1,246 @@
+{
+  "id": "kestrelbyte",
+  "name": "Kestrelbyte",
+  "blurb": "Kestrelbyte (fictional) sells a shared-notes and wiki tool to software teams.",
+  "docs": [
+    {
+      "id": "isp",
+      "title": "Information Security Policy",
+      "sections": [
+        {
+          "id": "isp-1",
+          "heading": "Purpose",
+          "text": "This policy sets out how we protect customer data and the systems that process it. It applies to every employee and contractor."
+        },
+        {
+          "id": "isp-2",
+          "heading": "Ownership",
+          "text": "The security team owns this policy and reviews it every year or after a major change to our product."
+        },
+        {
+          "id": "isp-3",
+          "heading": "Encryption at rest",
+          "text": "All customer data at rest is encrypted with AES-256. This includes our primary database, file storage and search indexes. Keys are managed in our cloud provider's key management service."
+        },
+        {
+          "id": "isp-4",
+          "heading": "Encryption in transit",
+          "text": "We do not use TLS. The app and API are served over plain HTTP inside our hosting provider's network."
+        },
+        {
+          "id": "isp-5",
+          "heading": "Customer-managed keys",
+          "text": "Every customer can bring their own encryption key. Customer-managed keys are held in the customer's own key management account and can be revoked by the customer at any time."
+        },
+        {
+          "id": "isp-6",
+          "heading": "Audit logs for customers",
+          "text": "Workspace admins can view and export an audit log of sign-ins, permission changes, exports and deletions. Audit log events can be streamed to the customer's SIEM."
+        },
+        {
+          "id": "isp-7",
+          "heading": "Security logging",
+          "text": "Security logs from production systems are collected centrally and kept for at least one year. Alerts on suspicious activity go to the on-call engineer."
+        },
+        {
+          "id": "isp-8",
+          "heading": "Vulnerability scanning",
+          "text": "We scan our infrastructure and dependencies for vulnerabilities every week. Critical findings are fixed within 7 days and high findings within 30 days."
+        },
+        {
+          "id": "isp-9",
+          "heading": "Code review",
+          "text": "Every code change is reviewed and approved by a second engineer before it is merged. Automated security checks run on every pull request."
+        }
+      ]
+    },
+    {
+      "id": "acs",
+      "title": "Access Control Standard",
+      "sections": [
+        {
+          "id": "acs-1",
+          "heading": "Scope",
+          "text": "This standard covers how people get, use and lose access to Kestrelbyte systems, including production and internal tools."
+        },
+        {
+          "id": "acs-2",
+          "heading": "Single sign-on",
+          "text": "Kestrelbyte supports single sign-on with SAML 2.0 and OpenID Connect on every plan. Admins can require SSO for every member of their workspace."
+        },
+        {
+          "id": "acs-3",
+          "heading": "Access reviews",
+          "text": "Managers review who has access to production and customer data every quarter. Access that is no longer needed is removed within five business days of the review."
+        },
+        {
+          "id": "acs-4",
+          "heading": "Removing access when people leave",
+          "text": "Access to our identity provider and production is removed on a person's last day. Access to a few third-party tools is removed by hand and can take up to two weeks."
+        }
+      ]
+    },
+    {
+      "id": "irp",
+      "title": "Incident Response Plan",
+      "sections": [
+        {
+          "id": "irp-1",
+          "heading": "Purpose",
+          "text": "This plan explains who does what when something goes wrong, and how we keep customers informed."
+        },
+        {
+          "id": "irp-2",
+          "heading": "Incident response plan",
+          "text": "We have a written incident response plan for outages. It does not yet cover security incidents such as a data breach."
+        },
+        {
+          "id": "irp-3",
+          "heading": "Telling customers about a breach",
+          "text": "If customer data is affected by a security breach, we notify the affected customers within 72 hours of confirming the breach."
+        },
+        {
+          "id": "irp-4",
+          "heading": "Practising the plan",
+          "text": "We practised the incident response plan once, in 2022. We have not set a regular schedule."
+        }
+      ]
+    },
+    {
+      "id": "bcp",
+      "title": "Backup and Disaster Recovery",
+      "sections": [
+        {
+          "id": "bcp-1",
+          "heading": "Scope",
+          "text": "This document covers how we keep the Kestrelbyte service running and how we recover data after a failure."
+        },
+        {
+          "id": "bcp-2",
+          "heading": "Backups",
+          "text": "We back up the primary database every day. File attachments are not backed up separately and rely on the storage provider's durability."
+        },
+        {
+          "id": "bcp-3",
+          "heading": "Backup encryption",
+          "text": "All backups are encrypted with AES-256, and access to the backup account is limited to two named engineers."
+        },
+        {
+          "id": "bcp-4",
+          "heading": "Recovery testing",
+          "text": "We test restoring the service from backups every year. Our target is to restore service within 4 hours and lose no more than 1 hour of data."
+        }
+      ]
+    },
+    {
+      "id": "vmp",
+      "title": "Vendor Management Policy",
+      "sections": [
+        {
+          "id": "vmp-1",
+          "heading": "Purpose",
+          "text": "We use outside vendors for hosting, email and support tools. This policy explains how we choose and watch them."
+        },
+        {
+          "id": "vmp-2",
+          "heading": "Checking our vendors",
+          "text": "We do not do security reviews of our vendors."
+        },
+        {
+          "id": "vmp-3",
+          "heading": "Subprocessor list",
+          "text": "We do not publish or share a list of subprocessors."
+        }
+      ]
+    },
+    {
+      "id": "drp",
+      "title": "Data Retention and Deletion",
+      "sections": [
+        {
+          "id": "drp-1",
+          "heading": "Purpose",
+          "text": "This policy explains how long we keep customer data and how we delete it."
+        },
+        {
+          "id": "drp-2",
+          "heading": "Deleting data when a customer leaves",
+          "text": "When a customer cancels, we delete their data from production within 30 days. Data in backups expires on its normal schedule, which can be up to a year."
+        },
+        {
+          "id": "drp-3",
+          "heading": "Where data is stored",
+          "text": "Customers can choose to store their data in the EU or the US. EU workspaces are stored and processed only in EU regions."
+        }
+      ]
+    },
+    {
+      "id": "hrs",
+      "title": "People Security",
+      "sections": [
+        {
+          "id": "hrs-1",
+          "heading": "Scope",
+          "text": "This covers security expectations for people who work at Kestrelbyte, from hiring to leaving."
+        },
+        {
+          "id": "hrs-2",
+          "heading": "Security training",
+          "text": "Every employee and contractor completes security awareness training when they join and every year after. Completion is tracked by the people team."
+        },
+        {
+          "id": "hrs-3",
+          "heading": "Background checks",
+          "text": "We run background checks on employees who will have access to production. Other employees are not checked."
+        }
+      ]
+    },
+    {
+      "id": "cmp",
+      "title": "Compliance and Audits",
+      "sections": [
+        {
+          "id": "cmp-1",
+          "heading": "Overview",
+          "text": "This page lists the outside audits and reports we can share with customers under NDA."
+        },
+        {
+          "id": "cmp-2",
+          "heading": "Penetration testing",
+          "text": "We have not had a penetration test by an outside firm."
+        },
+        {
+          "id": "cmp-3",
+          "heading": "SOC 2 report",
+          "text": "Kestrelbyte has a SOC 2 Type II report covering security, availability and confidentiality. A new report is issued every year."
+        }
+      ]
+    },
+    {
+      "id": "faq",
+      "title": "Customer Security FAQ (2023)",
+      "sections": [
+        {
+          "id": "faq-1",
+          "heading": "About this FAQ",
+          "text": "This FAQ was written for sales conversations in 2023. Where it differs from a current policy, the policy should be checked."
+        },
+        {
+          "id": "faq-2",
+          "heading": "Access reviews",
+          "text": "We do not run regular access reviews. Access is changed when someone asks for it."
+        },
+        {
+          "id": "faq-3",
+          "heading": "Code review",
+          "text": "Code review is not required before changes are deployed."
+        },
+        {
+          "id": "faq-4",
+          "heading": "Where data is stored",
+          "text": "All customer data is stored in the United States. We do not offer a choice of data location."
+        }
+      ]
+    }
+  ]
+}

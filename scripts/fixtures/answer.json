@@ -1,0 +1,199 @@
+{
+  "kbId": "kestrelbyte",
+  "provider": "fixture",
+  "model": "fixture",
+  "mode": "agent",
+  "results": [
+    {
+      "question": "Do you encrypt customer data at rest?",
+      "decision": {
+        "decision": "answer",
+        "value": "Yes",
+        "explanation": "All customer data at rest is encrypted with AES-256. This includes our primary database, file storage and search indexes. Keys are managed in our cloud provider's key management service.",
+        "confidence": "high",
+        "citations": [
+          {
+            "docId": "isp",
+            "sectionId": "isp-3",
+            "quote": "All customer data at rest is encrypted with AES-256."
+          }
+        ]
+      },
+      "trace": [
+        {
+          "type": "search",
+          "query": "Do you encrypt customer data at rest?",
+          "hits": [
+            {
+              "docId": "isp",
+              "sectionId": "isp-3",
+              "heading": "Encryption at rest",
+              "score": 5.1
+            }
+          ]
+        },
+        {
+          "type": "read",
+          "docId": "isp",
+          "sectionId": "isp-3",
+          "found": true
+        },
+        {
+          "type": "citation_check",
+          "ok": true,
+          "problems": [],
+          "downgraded": false
+        }
+      ],
+      "usage": {
+        "inputTokens": 1800,
+        "outputTokens": 220,
+        "modelCalls": 3,
+        "toolCalls": 2
+      },
+      "latencyMs": 4100
+    },
+    {
+      "question": "Is access removed within 24 hours when an employee leaves?",
+      "decision": {
+        "decision": "answer",
+        "value": "Partial",
+        "explanation": "Access to our identity provider and production is removed on a person's last day. Access to a few third-party tools is removed by hand and can take up to two weeks.",
+        "confidence": "medium",
+        "citations": [
+          {
+            "docId": "acs",
+            "sectionId": "acs-4",
+            "quote": "Access to our identity provider and production is removed on a person's last day."
+          }
+        ]
+      },
+      "trace": [
+        {
+          "type": "search",
+          "query": "Is access removed within 24 hours when a",
+          "hits": [
+            {
+              "docId": "acs",
+              "sectionId": "acs-4",
+              "heading": "Removing access when people leave",
+              "score": 5.1
+            }
+          ]
+        },
+        {
+          "type": "read",
+          "docId": "acs",
+          "sectionId": "acs-4",
+          "found": true
+        },
+        {
+          "type": "citation_check",
+          "ok": true,
+          "problems": [],
+          "downgraded": false
+        }
+      ],
+      "usage": {
+        "inputTokens": 1800,
+        "outputTokens": 220,
+        "modelCalls": 3,
+        "toolCalls": 2
+      },
+      "latencyMs": 4100
+    },
+    {
+      "question": "Do you have an annual penetration test by a third party?",
+      "decision": {
+        "decision": "answer",
+        "value": "No",
+        "explanation": "We have not had a penetration test by an outside firm.",
+        "confidence": "high",
+        "citations": [
+          {
+            "docId": "cmp",
+            "sectionId": "cmp-2",
+            "quote": "We have not had a penetration test by an outside firm."
+          }
+        ]
+      },
+      "trace": [
+        {
+          "type": "search",
+          "query": "Do you have an annual penetration test b",
+          "hits": [
+            {
+              "docId": "cmp",
+              "sectionId": "cmp-2",
+              "heading": "Penetration testing",
+              "score": 5.1
+            }
+          ]
+        },
+        {
+          "type": "read",
+          "docId": "cmp",
+          "sectionId": "cmp-2",
+          "found": true
+        },
+        {
+          "type": "citation_check",
+          "ok": true,
+          "problems": [],
+          "downgraded": false
+        }
+      ],
+      "usage": {
+        "inputTokens": 1800,
+        "outputTokens": 220,
+        "modelCalls": 3,
+        "toolCalls": 2
+      },
+      "latencyMs": 4100
+    },
+    {
+      "question": "Will you sign our data processing agreement without changes?",
+      "decision": {
+        "decision": "flag_for_expert",
+        "category": "commitment",
+        "reason": "The question asks for a contractual commitment; the documents describe current practice only."
+      },
+      "trace": [
+        {
+          "type": "search",
+          "query": "Will you sign our data processing agreem",
+          "hits": []
+        }
+      ],
+      "usage": {
+        "inputTokens": 1200,
+        "outputTokens": 90,
+        "modelCalls": 2,
+        "toolCalls": 1
+      },
+      "latencyMs": 2500
+    },
+    {
+      "question": "Do you support SCIM provisioning?",
+      "decision": {
+        "decision": "flag_for_expert",
+        "category": "not_covered",
+        "reason": "No section covers user provisioning or SCIM. Checked acs-1 and acs-2."
+      },
+      "trace": [
+        {
+          "type": "search",
+          "query": "Do you support SCIM provisioning?",
+          "hits": []
+        }
+      ],
+      "usage": {
+        "inputTokens": 1200,
+        "outputTokens": 90,
+        "modelCalls": 2,
+        "toolCalls": 1
+      },
+      "latencyMs": 2500
+    }
+  ]
+}
