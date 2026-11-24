@@ -53,7 +53,7 @@ describe("question-weighted limits", () => {
     expect(limitsFromEnv()).toEqual({ perHour: 40, perDay: 400 });
     delete process.env.QUESTIONS_PER_HOUR_PER_IP;
     delete process.env.DAILY_QUESTION_CAP;
-    expect(limitsFromEnv()).toEqual({ perHour: 100, perDay: 1000 });
+    expect(limitsFromEnv()).toEqual({ perHour: 100, perDay: 300 });
   });
 });
 

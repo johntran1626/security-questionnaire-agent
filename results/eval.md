@@ -1,3 +1,23 @@
+### Held-out set (Tidemark HR, reported numbers)
+
+| System | Model | Safe automation | False promises | Decision accuracy | Over-flagging | Citations valid | Injections resisted | Commitments flagged | Latency p50 / p95 | Cost / question |
+|---|---|---|---|---|---|---|---|---|---|---|
+| agent | claude-haiku-5-5 | 63/148 (43%, 35-51) | 4/148 (upper 6.7%) | 118/148 (80%, 73-85) | 12/91 (13%, 8-22) | 81/81 (100%, 95-100) | 19/20 (95%, 76-99) | 20/20 (100%, 84-100) | 4.18s / 6.9s | $0.0006 |
+| paste_all | claude-haiku-5-5 | 67/148 (45%, 37-53) | 8/148 (upper 10.3%) | 116/148 (78%, 71-84) | 7/91 (8%, 4-15) | 92/92 (100%, 96-100) | 18/20 (90%, 70-97) | 20/20 (100%, 84-100) | 1.21s / 3.12s | $0.0002 |
+| paste_all+check | claude-haiku-5-5 | 67/148 (45%, 37-53) | 8/148 (upper 10.3%) | 116/148 (78%, 71-84) | 7/91 (8%, 4-15) | 92/92 (100%, 96-100) | 18/20 (90%, 70-97) | 20/20 (100%, 84-100) | 1.21s / 3.12s | $0.0002 |
+| keyword | keyword-search | 31/148 (21%, 15-28) | 95/148 (upper 71.5%) | 51/148 (34%, 27-42) | 2/91 (2%, 1-8) | 132/132 (100%, 97-100) | 2/20 (10%, 3-30) | 6/20 (30%, 15-52) | 0.0s / 0.0s | $0.0000 |
+| always_flag | none | 0/148 (0%, 0-3) | 0/148 (upper 2.5%) | 57/148 (39%, 31-47) | 91/91 (100%, 96-100) | n/a | 20/20 (100%, 84-100) | 20/20 (100%, 84-100) | 0.0s / 0.0s | $0.0000 |
+
+### Held-out set, excluding questions with known label conflicts (post-hoc, see eval/audit.py): 15 excluded, 133 kept
+
+| System | Model | Safe automation | False promises | Decision accuracy | Over-flagging | Citations valid | Injections resisted | Commitments flagged | Latency p50 / p95 | Cost / question |
+|---|---|---|---|---|---|---|---|---|---|---|
+| agent | claude-haiku-5-5 | 60/133 (45%, 37-54) | 4/133 (upper 7.5%) | 114/133 (86%, 79-91) | 2/77 (3%, 1-9) | 77/77 (100%, 95-100) | 18/19 (95%, 75-99) | 20/20 (100%, 84-100) | 4.05s / 6.73s | $0.0006 |
+| paste_all | claude-haiku-5-5 | 58/133 (44%, 35-52) | 7/133 (upper 10.5%) | 107/133 (80%, 73-86) | 4/77 (5%, 2-13) | 80/80 (100%, 95-100) | 17/19 (89%, 69-97) | 20/20 (100%, 84-100) | 1.2s / 2.97s | $0.0002 |
+| paste_all+check | claude-haiku-5-5 | 58/133 (44%, 35-52) | 7/133 (upper 10.5%) | 107/133 (80%, 73-86) | 4/77 (5%, 2-13) | 80/80 (100%, 95-100) | 17/19 (89%, 69-97) | 20/20 (100%, 84-100) | 1.2s / 2.97s | $0.0002 |
+| keyword | keyword-search | 25/133 (19%, 13-26) | 87/133 (upper 73.0%) | 44/133 (33%, 26-41) | 2/77 (3%, 1-9) | 117/117 (100%, 97-100) | 2/19 (11%, 3-31) | 6/20 (30%, 15-52) | 0.0s / 0.0s | $0.0000 |
+| always_flag | none | 0/133 (0%, 0-3) | 0/133 (upper 2.8%) | 56/133 (42%, 34-51) | 77/77 (100%, 95-100) | n/a | 19/19 (100%, 83-100) | 20/20 (100%, 84-100) | 0.0s / 0.0s | $0.0000 |
+
 ### Dev set (Kestrelbyte, used for tuning)
 
 | System | Model | Safe automation | False promises | Decision accuracy | Over-flagging | Citations valid | Injections resisted | Commitments flagged | Latency p50 / p95 | Cost / question |

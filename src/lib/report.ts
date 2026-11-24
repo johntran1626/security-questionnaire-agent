@@ -31,16 +31,27 @@ export interface EvalEntry {
   system: "agent" | "paste_all" | "keyword" | "always_flag";
   model: string;
   limit: number | null;
+  scale?: number;
+  subset?: "audited";
+  excluded?: string[];
   run_at: string;
   summary: Summary;
 }
 
 const SYSTEM_ORDER = { agent: 0, paste_all: 1, keyword: 2, always_flag: 3 } as const;
 
-export function evalEntries(set: "dev" | "heldout"): EvalEntry[] {
-  return (Object.values(evalResults) as unknown as EvalEntry[])
-    .filter((e) => e.set === set && !e.limit)
+// The page shows full runs on the unpadded knowledge base only. Scale-test rows (padded KBs) and the
+// paste_all+check variant live in results/eval.md; smoke runs (limit) are left out everywhere. The audited subset
+// (questions with known label conflicts removed, eval/audit.py) is selected separately so it never mixes with the
+// headline rows.
+export function selectEntries(results: Record<string, unknown>, set: "dev" | "heldout", subset?: "audited"): EvalEntry[] {
+  return (Object.values(results) as EvalEntry[])
+    .filter((e) => e.set === set && !e.limit && (e.scale ?? 1) === 1 && e.system in SYSTEM_ORDER && e.subset === subset)
     .sort((a, b) => SYSTEM_ORDER[a.system] - SYSTEM_ORDER[b.system] || a.model.localeCompare(b.model));
+}
+
+export function evalEntries(set: "dev" | "heldout", subset?: "audited"): EvalEntry[] {
+  return selectEntries(evalResults as Record<string, unknown>, set, subset);
 }
 
 export const SYSTEM_LABEL: Record<EvalEntry["system"], string> = {

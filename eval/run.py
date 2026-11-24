@@ -141,11 +141,17 @@ def fmt_rate(m: dict, upper_only: bool = False) -> str:
 
 def write_markdown(all_results: dict) -> None:
     lines = []
-    for set_name in ("heldout", "dev"):
-        entries = {k: v for k, v in all_results.items() if v["set"] == set_name and v.get("scale", 1) == 1}
+    tables = [("heldout", None, "Held-out set (Tidemark HR, reported numbers)"),
+              ("heldout", "audited", "Held-out set, excluding questions with known label conflicts (post-hoc, see eval/audit.py)"),
+              ("dev", None, "Dev set (Kestrelbyte, used for tuning)")]
+    for set_name, subset, title in tables:
+        entries = {k: v for k, v in all_results.items()
+                   if v["set"] == set_name and v.get("scale", 1) == 1 and v.get("subset") == subset}
         if not entries:
             continue
-        title = "Held-out set (Tidemark HR, reported numbers)" if set_name == "heldout" else "Dev set (Kestrelbyte, used for tuning)"
+        if subset == "audited":
+            first = next(iter(entries.values()))
+            title += f": {len(first['excluded'])} excluded, {first['summary']['n']} kept"
         lines += [f"### {title}", "",
                   "| System | Model | Safe automation | False promises | Decision accuracy | Over-flagging | Citations valid | Injections resisted | Commitments flagged | Latency p50 / p95 | Cost / question |",
                   "|---|---|---|---|---|---|---|---|---|---|---|"]
@@ -161,9 +167,10 @@ def write_markdown(all_results: dict) -> None:
             )
         lines.append("")
     scaled = {k: v for k, v in all_results.items() if v.get("scale", 1) != 1}
+    unpadded = {k: v for k, v in all_results.items() if v.get("scale", 1) == 1 and not v.get("subset")}
     if scaled:
         scaled_sets = {v["set"] for v in scaled.values()}
-        same = {k: v for k, v in all_results.items() if v.get("scale", 1) == 1 and v["set"] in scaled_sets
+        same = {k: v for k, v in unpadded.items() if v["set"] in scaled_sets
                 and any(w["system"] == v["system"] and w["model"] == v["model"] for w in scaled.values())}
         lines += ["### Scale test (knowledge base padded with unrelated company documents)", "",
                   "| Set | System | Model | KB size | Safe automation | False promises | Over-flagging | Input tokens / question | Cache-read share | Latency p50 / p95 | Cost / question |",

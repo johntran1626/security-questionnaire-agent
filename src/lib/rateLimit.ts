@@ -81,12 +81,12 @@ function createUpstashLimiter({ perHour, perDay }: { perHour: number; perDay: nu
   };
 }
 
-// Defaults: 100 questions per IP per hour (two full 50-question runs), 1,000 questions per day overall. At the demo
-// model's measured cost this bounds worst-case spend to a few dollars a day.
+// Defaults: 100 questions per IP per hour (two full 50-question runs), 300 questions per day overall. At the demo
+// model's measured ~$0.001 per question this bounds worst-case spend to about $0.30 a day.
 export function limitsFromEnv() {
   return {
     perHour: Number(process.env.QUESTIONS_PER_HOUR_PER_IP) || 100,
-    perDay: Number(process.env.DAILY_QUESTION_CAP) || 1000,
+    perDay: Number(process.env.DAILY_QUESTION_CAP) || 300,
   };
 }
 

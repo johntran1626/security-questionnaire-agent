@@ -50,11 +50,14 @@ const LIMITS = [
   "It only knows the documents. If the docs are out of date, the answers are too. A real rollout needs an owner for the knowledge base.",
   "The citation check proves a quote exists, not that it supports the answer. Support is measured in the eval, not guaranteed at run time.",
   "Small samples. Every rate has a wide interval; zero false promises in about 150 questions still allows a true rate of a few percent.",
+  "One run per system on the held-out set. Repeated dev runs moved by up to 3 questions, so differences of a few questions are noise.",
+  "The held-out set was run on Claude Haiku 5.5 only. Sonnet 5.5 was compared on the dev set (two runs per system), not on held-out.",
   "Keyword search has no synonyms. The agent compensates by searching again with other words; a large knowledge base would likely need embeddings or hybrid search.",
 ];
 
 export default function ReportPage() {
   const heldout = evalEntries("heldout");
+  const audited = evalEntries("heldout", "audited");
   const dev = evalEntries("dev");
   const agent = heldout.find((e) => e.system === "agent") ?? dev.find((e) => e.system === "agent");
 
@@ -76,6 +79,18 @@ export default function ReportPage() {
         </p>
         {heldout.length ? <ResultsTable entries={heldout} /> : <p className="text-sm text-slate-500">Not run yet.</p>}
       </section>
+
+      {audited.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold">Held-out, excluding {audited[0].excluded?.length} questions with known label conflicts</h2>
+          <p className="max-w-3xl text-sm text-slate-600">
+            Found after the run: in a few places the generated documents contradict each other (for example, one policy says all
+            backups are encrypted, another says archive backups are not), while the labels assume they agree. These questions are
+            removed by control, for every system alike. The table above stays the headline result; this one is post-hoc.
+          </p>
+          <ResultsTable entries={audited} />
+        </section>
+      )}
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Dev results (used for tuning)</h2>
