@@ -58,6 +58,32 @@ prompt injection). The correct decision, value and source section follow from th
 Current dev-set numbers are in [`results/eval.md`](results/eval.md). They are tuning numbers, not the reported
 results.
 
+### Scale test, dev set (Claude Haiku 5.5, 80 questions, one run per cell)
+
+| KB size (tokens) | Agent: safe automation | Agent: false promises | Agent: cost / question | Paste-all: safe automation | Paste-all: false promises | Paste-all: cost / question |
+|---|---|---|---|---|---|---|
+| 1x (2.5K) | 41/80 | 1/80 | $0.0010 | 45/80 | 9/80 | $0.0002 |
+| 10x (23K) | 42/80 | 0/80 | $0.0006 | 44/80 | 4/80 | $0.0004 |
+| 50x (112K) | 42/80 | 0/80 | $0.0005 | 43/80 | 7/80 | $0.0074 |
+| 100x (224K) | 39/80 | 1/80 | $0.0006 | 40/80 | 9/80 | $0.0140 |
+
+Both systems use prompt caching except the 1x agent run, which predates it. Paste-all reads 98-99% of its input
+from the cache; without the cache, the 100x paste-all would cost about 8 times more (~$0.12 per question).
+
+What this shows so far:
+- **Accuracy does not separate the two.** At every size the safe-automation intervals overlap (each is roughly
+  +/-11 points). Paste-everything drifted down from 45 to 40 as the documents grew, inside the noise, and did not
+  collapse at 224K tokens on this model.
+- **Safety does.** Across the four sizes the agent made 2 false promises in 320 answers (95% interval 0.2-2.2%);
+  paste-everything made 29 in 320 (6.4-12.7%). These pool the same 80 questions at four sizes, so they are not
+  independent samples.
+- **Cost scales with the documents for paste-all, not for the agent.** The agent reads about 7.7K tokens per
+  question whatever the knowledge-base size; paste-all reads the whole base every time, 23x the agent's cost at 100x.
+- The paste-all citation check changed nothing at any size: every quote paste-all made was real. Its false
+  promises are wrong conclusions from genuine quotes, which a quote check cannot catch.
+- Both systems get one retry with the validation error when a reply breaks the output format; with that, neither
+  ended any question as "could not process".
+
 ## Run it locally
 
 Requires Node 22 and Python 3.13.

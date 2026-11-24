@@ -1,5 +1,5 @@
 import { checkDecision } from "@/lib/citations";
-import { pasteAllOutputSchema } from "@/lib/schemas";
+import { EXPLANATION_MAX, pasteAllOutputSchema, REASON_MAX } from "@/lib/schemas";
 import { searchKb } from "@/lib/search";
 import type { Decision, KnowledgeBase, QuestionResult } from "@/types/questionnaire";
 import { questionMessage, systemPrompt } from "./agent/prompts";
@@ -21,7 +21,8 @@ export function kbAsText(kb: KnowledgeBase): string {
 const JSON_INSTRUCTIONS = `You have no tools. All of the documents are below. Reply with one JSON object and nothing else, either
 {"decision":"answer","value":"Yes"|"No"|"Partial","explanation":"...","confidence":"high"|"medium"|"low","citations":[{"docId":"...","sectionId":"...","quote":"..."}]}
 or
-{"decision":"flag_for_expert","category":"not_covered"|"contradiction"|"commitment"|"unclear","reason":"..."}`;
+{"decision":"flag_for_expert","category":"not_covered"|"contradiction"|"commitment"|"unclear","reason":"..."}
+Keep "explanation" under ${EXPLANATION_MAX} characters and "reason" under ${REASON_MAX} characters.`;
 
 function extractJson(text: string): unknown {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -38,19 +39,41 @@ export async function runPasteAll(question: string, kb: KnowledgeBase, provider:
   const system = `${systemPrompt(kb, 0)}\n\n${JSON_INSTRUCTIONS}\n\nDocuments:\n\n${kbAsText(kb)}`;
   let decision: Decision | undefined;
 
+  // The retry tells the model what was wrong, as the agent loop does, so the baseline is not handicapped by a
+  // blind re-ask. The question goes in the prompt and the documents stay in the system prompt, so the retry still
+  // reuses the cached documents.
+  let lastError: string | undefined;
   for (let attempt = 0; attempt < 2 && !decision; attempt++) {
+    const prompt = lastError
+      ? `${questionMessage(question)}\n\nYour previous reply was invalid: ${lastError}. Reply again with one valid JSON object.`
+      : questionMessage(question);
+    let text: string;
     try {
-      const res = await provider.complete({ system, prompt: questionMessage(question), json: true });
+      const res = await provider.complete({ system, prompt, json: true });
       usage.modelCalls++;
       usage.inputTokens += res.usage.inputTokens;
       usage.outputTokens += res.usage.outputTokens;
       usage.cacheReadTokens += res.usage.cacheReadTokens ?? 0;
       usage.cacheWriteTokens += res.usage.cacheWriteTokens ?? 0;
-      const parsed = pasteAllOutputSchema.safeParse(extractJson(res.text));
-      if (parsed.success) decision = parsed.data as Decision;
-      else trace.push({ type: "invalid_decision", tool: "json", error: parsed.error.issues[0]?.message ?? "invalid" });
+      text = res.text;
     } catch (err) {
       trace.push({ type: "provider_error", message: (err instanceof Error ? err.message : String(err)).slice(0, 300) });
+      continue;
+    }
+    let json: unknown;
+    try {
+      json = extractJson(text);
+    } catch {
+      lastError = "not a JSON object";
+      trace.push({ type: "invalid_decision", tool: "json", error: lastError });
+      continue;
+    }
+    const parsed = pasteAllOutputSchema.safeParse(json);
+    if (parsed.success) decision = parsed.data as Decision;
+    else {
+      const issue = parsed.error.issues[0];
+      lastError = issue ? `${issue.path.join(".") || "reply"}: ${issue.message}` : "invalid";
+      trace.push({ type: "invalid_decision", tool: "json", error: lastError });
     }
   }
   decision ??= { decision: "flag_for_expert", category: "could_not_process", reason: "No valid JSON decision after one retry." };

@@ -42,9 +42,13 @@ const citationSchema = z.object({
   quote: z.string().min(1).max(600),
 });
 
+// Shared with the paste-all baseline's instructions, so both systems are told the same limits.
+export const EXPLANATION_MAX = 700;
+export const REASON_MAX = 500;
+
 export const answerArgsSchema = z.object({
   value: z.enum(["Yes", "No", "Partial"]),
-  explanation: z.string().trim().min(1).max(700),
+  explanation: z.string().trim().min(1).max(EXPLANATION_MAX),
   confidence: z.enum(["high", "medium", "low"]),
   citations: z.array(citationSchema).max(5),
 });
@@ -54,7 +58,7 @@ export const MODEL_FLAG_CATEGORIES = ["not_covered", "contradiction", "commitmen
 
 export const flagArgsSchema = z.object({
   category: z.enum(MODEL_FLAG_CATEGORIES),
-  reason: z.string().trim().min(1).max(500),
+  reason: z.string().trim().min(1).max(REASON_MAX),
 });
 
 // Output of the paste-everything baseline, which answers in one JSON message instead of tool calls.

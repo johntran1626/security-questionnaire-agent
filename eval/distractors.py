@@ -14,6 +14,7 @@ harder test and is not covered here.
 """
 
 import argparse
+import hashlib
 import json
 import random
 import re
@@ -274,20 +275,38 @@ def scale_kb(base: dict, scale: int, seed: int) -> dict:
     return {**base, "id": f"{base['id']}-x{scale}", "docs": docs}
 
 
+def update_lock(lock_text: str, entries: dict[str, str]) -> str:
+    """Add or replace "<sha256>  <file>" lines, keeping the existing order."""
+    lines = [line.split() for line in lock_text.splitlines() if line.strip()]
+    out = [(entries.pop(name, digest), name) for digest, name in lines]
+    out += [(digest, name) for name, digest in entries.items()]
+    return "".join(f"{d}  {n}\n" for d, n in out)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--kb", choices=sorted(STREAM_SEED), default="kestrelbyte")
     ap.add_argument("--scales", default="10,50,100")
+    ap.add_argument("--freeze", action="store_true",
+                    help="record the padded held-out files' hashes in eval/data/heldout.sha256 (tidemark only)")
     args = ap.parse_args()
+    if args.freeze and args.kb != "tidemark":
+        ap.error("--freeze is for the held-out knowledge base (--kb tidemark)")
+    frozen: dict[str, str] = {}
     base = json.loads((SOURCE_DIR / f"{args.kb}.json").read_text())
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for scale in (int(s) for s in args.scales.split(",")):
         kb = scale_kb(base, scale, STREAM_SEED[args.kb])
         path = OUT_DIR / f"{kb['id']}.json"
         path.write_text(json.dumps(kb, ensure_ascii=False) + "\n")
+        frozen[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         n_sections = sum(len(d["sections"]) for d in kb["docs"])
         print(f"{path.relative_to(ROOT)}: {len(kb['docs'])} docs, {n_sections} sections, "
               f"{kb_chars(kb):,} chars ({kb_chars(kb) / kb_chars(base):.1f}x)")
+    if args.freeze:
+        lock = ROOT / "eval" / "data" / "heldout.sha256"
+        lock.write_text(update_lock(lock.read_text(), frozen))
+        print(f"froze {', '.join(sorted(frozen))} in {lock.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

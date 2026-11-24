@@ -39,16 +39,33 @@ def load_rows(name: str) -> list[dict]:
     return [json.loads(line) for line in (DATA / f"{name}.jsonl").read_text().splitlines() if line.strip()]
 
 
-def verify_heldout_lock() -> None:
-    lock = {}
-    for line in (DATA / "heldout.sha256").read_text().splitlines():
-        digest, fname = line.split()
-        lock[fname] = digest
+def heldout_files(kb_scale: int) -> dict[str, Path]:
+    """Every file a held-out run reads. A padded run also reads its padded knowledge base."""
     files = {"heldout.jsonl": DATA / "heldout.jsonl", "tidemark.json": ROOT / "src" / "data" / "kb" / "tidemark.json"}
+    if kb_scale != 1:
+        name = f"tidemark-x{kb_scale}.json"
+        files[name] = DATA / "kb" / name
+    return files
+
+
+def check_lock(lock_text: str, files: dict[str, Path]) -> str | None:
+    """Return why the run must not start, or None if every file matches its frozen hash."""
+    lock = dict(reversed(line.split()) for line in lock_text.splitlines() if line.strip())
     for fname, path in files.items():
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
-        if actual != lock[fname]:
-            sys.exit(f"Held-out file {fname} changed since it was frozen (hash mismatch). Refusing to run.")
+        if fname not in lock:
+            return f"Held-out file {fname} is not frozen (no entry in heldout.sha256). Refusing to run."
+        if not path.exists():
+            return (f"Held-out file {fname} is missing. Rebuild it with "
+                    f"python -m eval.distractors --kb tidemark --scales <N>; the hash check then confirms it is identical.")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != lock[fname]:
+            return f"Held-out file {fname} changed since it was frozen (hash mismatch). Refusing to run."
+    return None
+
+
+def verify_heldout_lock(kb_scale: int) -> None:
+    err = check_lock((DATA / "heldout.sha256").read_text(), heldout_files(kb_scale))
+    if err:
+        sys.exit(err)
 
 
 def prices() -> dict:
@@ -180,9 +197,7 @@ def main() -> None:
     args = ap.parse_args()
 
     if args.set == "heldout":
-        verify_heldout_lock()
-        if args.kb_scale != 1:
-            sys.exit("Padded held-out knowledge bases are not frozen yet; run the scale test on dev.")
+        verify_heldout_lock(args.kb_scale)
     rows = load_rows(args.set)
     if args.limit:
         rows = rows[:args.limit]

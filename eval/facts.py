@@ -61,7 +61,7 @@ FILLER = {
         "acs": [("1. Applicability", "This Standard applies to all workforce members and to all systems that store or process Customer Data.")],
         "irp": [("1. Objective", "This Procedure defines the phases of incident handling: identification, containment, eradication, recovery and post-incident review.")],
         "bcp": [("1. Objective", "This Plan defines how Tidemark HR maintains availability of the payroll platform and restores operations after a disruption.")],
-        "vmp": [("1. Objective", "This Policy governs the selection, onboarding and ongoing oversight of third parties that access Customer Data.")],
+        "vmp": [("1. Objective", "This Policy sets out Tidemark HR's requirements for third parties that access Customer Data.")],
         "drp": [("1. Objective", "This Schedule defines retention periods for categories of records held by Tidemark HR.")],
         "hrs": [("1. Applicability", "This Standard applies to employees, contractors and temporary staff of Tidemark HR.")],
         "cmp": [("1. Overview", "Tidemark HR maintains independent attestations, which are available to customers and prospects upon execution of a non-disclosure agreement.")],
